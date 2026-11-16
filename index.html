@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Visualizador web de arquivos DWG/DXF com cálculo de áreas de polígonos." />
+    <title>Visualizador DWG</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" d="M3 21V3h18v18H3zm0-6h8v6M11 3v8h10"/></svg>
+        <span>Visualizador DWG</span>
+      </div>
+      <div class="file-name" id="fileName">Nenhum arquivo carregado</div>
+      <label class="btn primary">
+        <input type="file" id="fileInput" accept=".dwg,.dxf" hidden />
+        Abrir arquivo…
+      </label>
+    </header>
+
+    <main class="layout">
+      <section class="stage" id="stage">
+        <canvas id="canvas"></canvas>
+
+        <div class="dropzone" id="dropzone">
+          <div class="dropzone-card">
+            <svg viewBox="0 0 24 24" width="48" height="48" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" d="M12 16V4m0 0-4 4m4-4 4 4M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+            <h2>Arraste um arquivo DWG aqui</h2>
+            <p>ou <label class="link"><input type="file" id="fileInput2" accept=".dwg,.dxf" hidden />escolha no computador</label></p>
+            <p class="hint">Formatos: .dwg (R13 a 2018+) e .dxf · o arquivo é processado no seu navegador, nada é enviado ao servidor.</p>
+          </div>
+        </div>
+
+        <div class="loading" id="loading" hidden>
+          <div class="spinner"></div>
+          <span id="loadingText">Processando…</span>
+        </div>
+
+        <div class="toolbar" id="toolbar" hidden>
+          <button class="tool" id="zoomIn" title="Aproximar (+)">＋</button>
+          <button class="tool" id="zoomOut" title="Afastar (−)">－</button>
+          <button class="tool" id="zoomFit" title="Ajustar à tela (F / duplo clique)">⤢</button>
+        </div>
+
+        <div class="statusbar" id="statusbar" hidden>
+          <span id="coords">X: — Y: —</span>
+          <span class="muted">Roda: zoom · Arrastar: mover · Clique: selecionar polígono</span>
+        </div>
+      </section>
+
+      <aside class="panel" id="panel">
+        <div class="panel-empty" id="panelEmpty">
+          <h3>Informações do desenho</h3>
+          <p>Carregue um arquivo para ver layers, entidades e as áreas dos polígonos fechados.</p>
+        </div>
+
+        <div id="panelContent" hidden>
+          <section class="card">
+            <h3>Arquivo</h3>
+            <dl class="kv" id="fileInfo"></dl>
+            <label class="field">
+              <span>Unidade do desenho</span>
+              <select id="unitSelect">
+                <option value="0.001">Milímetros (mm)</option>
+                <option value="0.01">Centímetros (cm)</option>
+                <option value="0.1">Decímetros (dm)</option>
+                <option value="1">Metros (m)</option>
+                <option value="1000">Quilômetros (km)</option>
+                <option value="0.0254">Polegadas (in)</option>
+                <option value="0.3048">Pés (ft)</option>
+                <option value="0">Sem unidade (u)</option>
+              </select>
+            </label>
+            <p class="note" id="unitNote"></p>
+          </section>
+
+          <section class="card">
+            <h3>Resumo</h3>
+            <div class="stats" id="stats"></div>
+          </section>
+
+          <section class="card" id="selectedCard" hidden>
+            <h3>Polígono selecionado <button class="icon-btn" id="clearSel" title="Limpar seleção">✕</button></h3>
+            <dl class="kv" id="selectedInfo"></dl>
+          </section>
+
+          <section class="card">
+            <h3>Polígonos e áreas</h3>
+            <div class="filters">
+              <select id="layerFilter"><option value="">Todos os layers</option></select>
+              <select id="sortSelect">
+                <option value="area-desc">Maior área</option>
+                <option value="area-asc">Menor área</option>
+                <option value="layer">Layer</option>
+              </select>
+            </div>
+            <label class="check"><input type="checkbox" id="includeBlocks" /> Incluir polígonos dentro de blocos</label>
+            <label class="check"><input type="checkbox" id="includeHatch" checked /> Incluir hachuras</label>
+            <div class="total" id="polyTotal"></div>
+            <ul class="poly-list" id="polyList"></ul>
+            <button class="btn small" id="exportCsv">Exportar CSV</button>
+          </section>
+
+          <section class="card">
+            <h3>Layers <span class="muted" id="layerCount"></span></h3>
+            <div class="layer-actions">
+              <button class="btn small" id="layersAll">Mostrar todos</button>
+              <button class="btn small" id="layersNone">Ocultar todos</button>
+            </div>
+            <ul class="layer-list" id="layerList"></ul>
+          </section>
+
+          <section class="card">
+            <h3>Entidades por tipo</h3>
+            <ul class="type-list" id="typeList"></ul>
+          </section>
+        </div>
+      </aside>
+    </main>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

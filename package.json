@@ -1,0 +1,21 @@
+{
+  "name": "dwg-viewer-ia",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Visualizador web de arquivos DWG/DXF com cálculo de áreas de polígonos",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@mlightcad/libredwg-web": "^0.9.0"
+  },
+  "devDependencies": {
+    "vite": "^8.3.8"
+  }
+}
